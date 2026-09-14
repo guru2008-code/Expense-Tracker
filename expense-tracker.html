@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Expense Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f4f6f9;display:flex;justify-content:center;padding:30px}
+.app{background:#fff;width:420px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.15);overflow:hidden}
+header{background:#6c5ce7;color:#fff;padding:18px;text-align:center}
+header h2{margin-bottom:6px}#balance{font-size:22px;font-weight:bold}
+.form{display:flex;gap:6px;padding:15px}
+.form input,.form select{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.form button{background:#6c5ce7;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
+.form button:hover{background:#5548c8}
+ul{list-style:none;padding:0 15px 15px}
+li{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #eee}
+.cat{font-size:12px;color:#888;margin-left:6px}
+.amt-exp{color:#e74c3c;font-weight:bold}.amt-inc{color:#27ae60;font-weight:bold}
+.del{background:none;color:#aaa;border:none;cursor:pointer;font-size:16px}
+.del:hover{color:#e74c3c}
+</style></head><body>
+
+<div class="app">
+<header><h2>Expense Tracker</h2><div id="balance">₹0.00</div></header>
+
+<div class="form">
+<select id="type"><option value="expense">Expense</option><option value="income">Income</option></select>
+<input type="text" id="desc" placeholder="Description">
+<input type="number" id="amount" placeholder="Amount">
+<button onclick="addEntry()">Add</button>
+</div>
+
+<ul id="list"></ul>
+</div>
+
+<script>
+let entries=[], balance=0;
+
+function addEntry(){
+  const type=document.getElementById("type").value;
+  const desc=desc_input.value.trim();
+  const amount=parseFloat(amount_input.value);
+  if(!desc || !amount || amount<=0){alert("Enter valid description and amount");return;}
+
+  const entry={id:Date.now(), type, desc, amount};
+  entries.push(entry);
+  balance += type==="income" ? amount : -amount;
+  render();
+  desc_input.value=""; amount_input.value="";
+}
+
+function removeEntry(id){
+  const e=entries.find(x=>x.id===id);
+  balance -= e.type==="income" ? e.amount : -e.amount;
+  entries = entries.filter(x=>x.id!==id);
+  render();
+}
+
+function render(){
+  list.innerHTML = entries.map(e=>`
+    <li>
+      <span>${e.desc}<span class="cat">${e.type}</span></span>
+      <span>
+        <span class="${e.type==='income'?'amt-inc':'amt-exp'}">${e.type==='income'?'+':'-'}₹${e.amount.toFixed(2)}</span>
+        <button class="del" onclick="removeEntry(${e.id})">✕</button>
+      </span>
+    </li>`).join("");
+  balanceEl.innerHTML = "₹" + balance.toFixed(2);
+}
+
+const desc_input=document.getElementById("desc");
+const amount_input=document.getElementById("amount");
+const list=document.getElementById("list");
+const balanceEl=document.getElementById("balance");
+</script>
+</body></html>
